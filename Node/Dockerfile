@@ -2,10 +2,14 @@ FROM node:22
 
 WORKDIR /app
 
-COPY . .
+RUN npm install -g nodemon
+
+COPY package.json .
 
 RUN npm install
 
-EXPOSE 5001 
+COPY . .
 
-CMD [ "node", "app.js" ]
+EXPOSE 5001
+
+CMD [ "npm", "run", "start"]

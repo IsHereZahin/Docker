@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docker Commands for Node.js</title>
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f3f4f6;
+        }
+        /* Layout */
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: #fff;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            padding: 1rem;
+            overflow-y: auto;
+            position: fixed;
+            height: 100vh;
+        }
+        .sidebar h1 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #1a202c;
+        }
+        .sidebar ul {
+            list-style-type: none;
+        }
+        .sidebar li {
+            margin-bottom: 0.5rem;
+        }
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+            color: #4a5568;
+            text-decoration: none;
+            border-radius: 0.25rem;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .sidebar a:hover, .sidebar a.active {
+            background-color: #edf2f7;
+            color: #2b6cb0;
+        }
+        .sidebar a::before {
+            content: '▸';
+            margin-right: 0.5rem;
+        }
+        /* Main content */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            margin-left: 250px;
+            overflow-y: auto;
+        }
+        .section {
+            background-color: #fff;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #2d3748;
+            border-bottom: 2px solid #edf2f7;
+            padding-bottom: 0.5rem;
+        }
+        .section h3 {
+            font-size: 1.2rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #4a5568;
+        }
+        .section p {
+            margin-bottom: 1rem;
+        }
+        .section a {
+            color: #4299e1;
+            text-decoration: none;
+        }
+        .section a:hover {
+            text-decoration: underline;
+        }
+        /* Code blocks */
+        pre {
+            background-color: #2d3748;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.25rem;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            margin-bottom: 1rem;
+        }
+        /* Command blocks */
+        .command {
+            background-color: #edf2f7;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            font-family: 'Courier New', Courier, monospace;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        .command::before {
+            content: '$';
+            margin-right: 0.5rem;
+            color: #718096;
+        }
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="sidebar">
+            <h1>Docker Docs</h1>
+            <ul id="nav-list"></ul>
+        </nav>
+        <main class="main-content" id="main-content"></main>
+    </div>
+
+    <script>
+        const sections = [
+            {
+                id: "setup",
+                title: "1. Setup",
+                content: [
+                    {
+                        subtitle: "Install Docker",
+                        text: "To get started, download and install Docker from the official website:",
+                        link: {
+                            text: "🔗 Docker Official Site",
+                            url: "https://www.docker.com/"
+                        }
+                    },
+                    {
+                        subtitle: "Creating a Dockerfile",
+                        text: "Once Docker is installed, navigate to the root directory of your project and create a Dockerfile. This file defines the environment and dependencies for your containerized application.",
+                        code: `FROM node:22
+
+WORKDIR /app
+
+COPY . .
+
+RUN npm install
+
+EXPOSE 5001 
+
+CMD [ "node", "app.js" ]`
+                    }
+                ]
+            },
+            {
+                id: "build-and-run",
+                title: "2. Build and Run Docker Image",
+                content: [
+                    {
+                        subtitle: "Build Docker Image",
+                        command: "docker build .",
+                        text: "Build the Docker image from the current directory"
+                    },
+                    {
+                        subtitle: "Run Docker Image",
+                        command: "docker run img_id",
+                        text: "Run the Docker image using its ID"
+                    },
+                    {
+                        subtitle: "Build Docker Image with a Custom Tag",
+                        command: "docker build -t javascript_app:tag_name .",
+                        text: "Build image with name \"javascript_app\" and tag \"tag_name\""
+                    },
+                    {
+                        subtitle: "Run Docker Image with Custom Tag",
+                        command: "docker run javascript_app:tag_name",
+                        text: "Run the image with the specified tag"
+                    }
+                ]
+            },
+            {
+                id: "stop-and-start",
+                title: "3. Stop and Start Containers",
+                content: [
+                    {
+                        subtitle: "Stop a Running Container",
+                        command: "docker stop <container_id>",
+                        text: "This command is used to stop a running Docker container. Replace <container_id> with the container's ID or name."
+                    },
+                    {
+                        subtitle: "Start a Stopped Container",
+                        command: "docker start <container_id>",
+                        text: "This command starts a container that has been stopped. Again, replace <container_id> with the actual container ID or name."
+                    },
+                    {
+                        subtitle: "Restart a Running Container",
+                        command: "docker restart <container_id>",
+                        text: "This command stops and then starts a container, useful for applying changes like updated configurations."
+                    },
+                    {
+                        subtitle: "List Running Containers",
+                        command: "docker ps",
+                        text: "The docker ps command shows a list of all running containers. You can add the -a flag to see both running and stopped containers."
+                    },
+                    {
+                        subtitle: "List All Containers (Including Stopped)",
+                        command: "docker ps -a",
+                        text: "This command lists all containers, including those that have stopped. This is useful for checking the status of containers that are no longer running."
+                    },
+                    {
+                        subtitle: "Remove a Stopped Container",
+                        command: "docker rm <container_id>",
+                        text: "This command removes a stopped container. You need to replace <container_id> with the ID or name of the container you want to remove."
+                    }
+                ]
+            },
+            {
+                id: "clean-up",
+                title: "4. Clean Up Containers and Images",
+                content: [
+                    {
+                        subtitle: "Remove All Stopped Containers",
+                        command: "docker container prune"
+                    },
+                    {
+                        subtitle: "Remove Unused Docker Images",
+                        command: "docker image prune -a",
+                        text: "(a for creating forces if normally not removed)"
+                    }
+                ]
+            },
+            {
+                id: "custom-container",
+                title: "5. Run with Custom Container Name",
+                content: [
+                    {
+                        subtitle: "Run Docker Container with Specific Name",
+                        command: "docker run -p 5001:5001 --name node_c --rm node_img",
+                        text: "- Runs a container from the image `node_img`.\n- Maps port 5001 on the host to 5001 in the container.\n- Assigns the container a custom name `node_c`.\n- Uses `--rm` to automatically remove the container once it stops."
+                    }
+                ]
+            },
+            {
+                id: "additional-commands",
+                title: "6. Additional Commands",
+                content: [
+                    {
+                        subtitle: "Change Port Mapping and Run Docker Container",
+                        command: "docker run -p 5002:5001 img_name:tag_name"
+                    },
+                    {
+                        subtitle: "Run and Automatically Remove Container",
+                        command: "docker run -p 5003:5001 --rm container_id",
+                        text: "Run and remove the container once stopped (container_id = container id or name)"
+                    },
+                    {
+                        subtitle: "Stop a Running Container (Full ID)",
+                        command: "docker container stop container_id",
+                        text: "Stop the container by its full ID"
+                    },
+                    {
+                        subtitle: "Run and Build Node.js Application Docker Image",
+                        command: "docker build -t img_name:tag_name .",
+                        text: "Build the node application image"
+                    },
+                    {
+                        command: "docker run -p 5001:5001 img_name:tag_name",
+                        text: "Run the container, mapping port 5001"
+                    }
+                ]
+            },
+            {
+                id: "live-auto-update",
+                title: "7. Live Auto Update with Docker",
+                content: [
+                    {
+                        subtitle: "Update package.json",
+                        text: "Modify the scripts section to use Nodemon for automatic live updates:",
+                        code: `"scripts": {
+  "test": "echo \\"Error: no test specified\\" && exit 1",
+  "start": "nodemon -L app.js"  // -L for windows pc
+}`
+                    },
+                    {
+                        subtitle: "Update Dockerfile",
+                        text: "Ensure Nodemon is globally installed and modify the CMD instruction:",
+                        code: `FROM node:22
+WORKDIR /app
+RUN npm install -g nodemon
+COPY package.json .
+RUN npm install
+COPY . .
+EXPOSE 5001
+CMD [ "npm", "run", "start"]`
+                    },
+                    {
+                        subtitle: "Build and Run the Docker Container",
+                        command: "docker build -t img_name .",
+                        text: "Run the following command to build the Docker image:"
+                    },
+                    {
+                        text: "Then, run the container with volume mounting for live updates:",
+                        command: `docker run -p 5001:5001 --name container_name --rm -v "D:\\Docker\\Node\\Node:/app" -v "/app/node_modules" img_name`
+                    },
+                    {
+                        subtitle: "Simplify",
+                        command: `docker run -p 5001:5001 --name container_name --rm -v "$(pwd):/app" -v "/app/node_modules" img_name`
+                    }
+                ]
+            },
+            {
+                id: "docker-compose",
+                title: "8. Docker Compose for Node.js Application",
+                content: [
+                    {
+                        subtitle: "docker-compose.yml Example",
+                        code: `version: '3.8'
+
+services:
+  frontend:
+    build: ./
+    container_name: node_c
+    ports:
+      - '5001:5001'
+    volumes:
+      - .:/app  # Mount project directory into container
+      - /app/node_modules  # Isolate node_modules inside the container
+    environment:
+      - NODE_ENV=development
+    command: npm run dev -- --host 0.0.0.0
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge`
+                    },
+                    {
+                        subtitle: "Build and Run Docker Compose",
+                        text: "To build and run the Docker Compose application:",
+                        command: "docker-compose up --build"
+                    },
+                    {
+                        text: "To stop and remove the container:",
+                        command: "docker-compose down"
+                    }
+                ]
+            },
+            {
+                id: "push-and-pull",
+                title: "9. Push and Pull Docker Images",
+                content: [
+                    {
+                        subtitle: "Log in to Docker Hub",
+                        command: "docker login",
+                        text: "Log in to Docker Hub or your private registry before pushing images. This command will prompt you to enter your username and password to authenticate with Docker Hub or a private registry."
+                    },
+                    {
+                        subtitle: "Push a Docker Image",
+                        command: "docker push username/repository:tag",
+                        text: "Push your local Docker image to Docker Hub or your private registry. Replace 'username', 'repository', and 'tag' with your actual Docker Hub username, the name of your repository, and the image tag you want to push."
+                    },
+                    {
+                        subtitle: "Pull a Docker Image",
+                        command: "docker pull username/repository:tag",
+                        text: "Pull an image from Docker Hub or your private registry. This command allows you to download a specific image from the registry to your local machine. Make sure to replace 'username', 'repository', and 'tag' with the corresponding details."
+                    },
+                    {
+                        subtitle: "Tag an Image",
+                        command: "docker tag local-image:tag username/repository:tag",
+                        text: "Tag your local image before pushing it to a registry. This step is essential if you want to push your image to Docker Hub or any other registry. You can create a custom tag for your image to differentiate between versions or builds."
+                    },
+                    {
+                        subtitle: "Push to a Private Registry",
+                        command: "docker push registry-url/username/repository:tag",
+                        text: "Push your image to a private registry. You will need to specify the registry URL, along with your username, repository name, and tag. This is useful for teams or organizations using a private registry."
+                    },
+                    {
+                        subtitle: "Pull from a Private Registry",
+                        command: "docker pull registry-url/username/repository:tag",
+                        text: "Pull an image from a private registry. You need to provide the registry URL along with the repository details. This allows you to get images that are stored in a private Docker registry."
+                    },
+                    {
+                        text: "Remember to replace 'username', 'repository', 'tag', and 'registry-url' with your actual values. Properly tagging and versioning your images is crucial when managing Docker images in production environments."
+                    }
+                ]
+            },
+        ];
+
+        function createNavigation() {
+            const navList = document.getElementById('nav-list');
+            sections.forEach(section => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = `#${section.id}`;
+                a.textContent = section.title;
+                li.appendChild(a);
+                navList.appendChild(li);
+            });
+        }
+
+        function createContent() {
+            const mainContent = document.getElementById('main-content');
+            sections.forEach(section => {
+                const sectionElement = document.createElement('section');
+                sectionElement.id = section.id;
+                sectionElement.className = 'section';
+
+                const title = document.createElement('h2');
+                title.textContent = section.title;
+                sectionElement.appendChild(title);
+
+                section.content.forEach(item => {
+                    if (item.subtitle) {
+                        const subtitle = document.createElement('h3');
+                        subtitle.textContent = item.subtitle;
+                        sectionElement.appendChild(subtitle);
+                    }
+
+                    if (item.text) {
+                        const text = document.createElement('p');
+                        text.textContent = item.text;
+                        sectionElement.appendChild(text);
+                    }
+
+                    if (item.link) {
+                        const link = document.createElement('a');
+                        link.href = item.link.url;
+                        link.textContent = item.link.text;
+                        link.target = '_blank';
+                        link.rel = 'noopener noreferrer';
+                        sectionElement.appendChild(link);
+                    }
+
+                    if (item.code) {
+                        const pre = document.createElement('pre');
+                        pre.textContent = item.code;
+                        sectionElement.appendChild(pre);
+                    }
+
+                    if (item.command) {
+                        const command = document.createElement('div');
+                        command.className = 'command';
+                        command.textContent = item.command;
+                        sectionElement.appendChild(command);
+                    }
+                });
+
+                mainContent.appendChild(sectionElement);
+            });
+        }
+
+        function highlightActiveSection() {
+            const navLinks = document.querySelectorAll('#nav-list a');
+            const sections = document.querySelectorAll('.section');
+
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (pageYOffset >= sectionTop - 60) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').slice(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            createNavigation();
+            createContent();
+            highlightActiveSection();
+        });
+    </script>
+</body>
+</html>
